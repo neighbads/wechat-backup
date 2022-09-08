@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 )
 
@@ -10,10 +11,35 @@ type WCDB struct {
 	wxfileindex *WxFileIndex
 }
 
-func InitWCDB(basePath string) *WCDB {
+func InitWCDB(basePath string, dbPassword string) *WCDB {
 	wcdb := &WCDB{}
-	wcdb.enmicromsg = OpenEnMicroMsg(basePath + "/EnMicroMsg_plain.db")
-	wcdb.wxfileindex = OpenWxFileIndex(basePath + "/WxFileIndex_plain.db")
+
+	enMicroMsgPath := basePath + "/EnMicroMsg.db"
+	wxFileIndexPath := basePath + "/WxFileIndex.db"
+
+	dbname_EnMicroMsg := fmt.Sprintf("%s?"+
+		"_pragma_key=%s&"+
+		"_pragma_cipher_use_hmac=off&"+
+		"_pragma_kdf_iter=4000&"+
+		"_pragma_cipher_page_size=1024&"+
+		"_pragma_cipher_hmac_algorithm=HMAC-SHA1&"+
+		"_pragma_cipher_kdf_algorithm=PBKDF2-HMAC-SHA1&",
+		enMicroMsgPath, url.QueryEscape(dbPassword))
+
+	dbname_WxFileIndex := fmt.Sprintf("%s?"+
+		"_pragma_key=%s&"+
+		"_pragma_cipher_use_hmac=off&"+
+		"_pragma_kdf_iter=4000&"+
+		"_pragma_cipher_page_size=1024&"+
+		"_pragma_cipher_hmac_algorithm=HMAC-SHA1&"+
+		"_pragma_cipher_kdf_algorithm=PBKDF2-HMAC-SHA1&",
+		wxFileIndexPath, url.QueryEscape(dbPassword))
+
+	fmt.Println("dbname_EnMicroMsg:", dbname_EnMicroMsg)
+	fmt.Println("dbname_WxFileIndex:", dbname_WxFileIndex)
+
+	wcdb.enmicromsg = OpenEnMicroMsg(dbname_EnMicroMsg)
+	wcdb.wxfileindex = OpenWxFileIndex(dbname_WxFileIndex)
 	return wcdb
 }
 

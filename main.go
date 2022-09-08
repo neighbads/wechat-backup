@@ -4,11 +4,16 @@ import (
 	"embed"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io/fs"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/greycodee/wechat-backup/db"
 )
@@ -18,19 +23,87 @@ var wcdb *db.WCDB
 //go:embed static
 var htmlFile embed.FS
 
-var serverPort = flag.String("p", "9999", "server port")
-var basePath = flag.String("f", "", "wechat bak folder")
+var serverPort = flag.String("l", "8081", "server listen port")
+var basePath = flag.String("d", "./data_backup", "wechat bak folder")
+var dbPasswd = flag.String("p", "", "sqlite db password")
 
 func init() {
 	flag.Parse()
-	if basePath == nil || *basePath == "" {
-		panic("please specify basePath")
+
+	// select bak folder
+	dirList := make([]string, 0)
+	files, _ := ioutil.ReadDir(*basePath)
+	for _, f := range files {
+		if !f.IsDir() {
+			continue
+		}
+
+		MicroMsgFiles, _ := ioutil.ReadDir(*basePath + "/" + f.Name() + "/MicroMsg")
+		for _, MicroMsgFile := range MicroMsgFiles {
+			if !MicroMsgFile.IsDir() {
+				continue
+			}
+
+			DbPath := *basePath + "/" + f.Name() + "/MicroMsg/" + MicroMsgFile.Name()
+			// fmt.Println("DbPath", DbPath)
+
+			enMicroMsgPath := DbPath + "/EnMicroMsg.db"
+			wxFileIndexPath := DbPath + "/WxFileIndex.db"
+			// fmt.Println("enMicroMsgPath", enMicroMsgPath)
+
+			// path exist
+			_, err := os.Stat(enMicroMsgPath)
+			if err != nil {
+				continue
+			}
+			_, err = os.Stat(wxFileIndexPath)
+			if err != nil {
+				continue
+			}
+			fmt.Println(len(dirList), ": ", DbPath)
+			dirList = append(dirList, DbPath)
+		}
 	}
+
+	// not found
+	if len(dirList) == 0 {
+		log.Fatal("not found EnMicroMsg.db")
+	}
+
+	// get input
+	var input int
+	fmt.Print("Please select backup folder[0]: ")
+	fmt.Scanln(&input)
+	if input >= len(dirList) {
+		log.Fatal("Invalid Input")
+	}
+	*basePath = dirList[input]
+
+	fmt.Println("EnMicroMsg.db path: \t", *basePath+"/EnMicroMsg.db")
+	fmt.Println("WxFileIndex.db path: \t", *basePath+"/WxFileIndex.db")
+
+	// read db passwd
+	if *dbPasswd == "" {
+		pwdPath := filepath.Clean(*basePath + "/../../passwd.txt")
+		pwdPath = "./" + strings.Replace(pwdPath, "\\", "/", -1)
+		fmt.Println("Passwd.txt path: \t", pwdPath)
+		dbPasswdFileData, err := ioutil.ReadFile(pwdPath)
+		if err != nil {
+			log.Fatal("please set sqlite db password, or create passwd.txt file in bak folder")
+		}
+
+		if len(dbPasswdFileData) < 7 {
+			log.Fatal("passwd.txt file content error, need 7 char")
+		}
+		*dbPasswd = string(dbPasswdFileData[:7])
+	}
+
+	fmt.Println("sqlite db password: \t[ ", *dbPasswd, " ]")
 }
 
 func main() {
 
-	wcdb = db.InitWCDB(*basePath)
+	wcdb = db.InitWCDB(*basePath, *dbPasswd)
 
 	fsys, _ := fs.Sub(htmlFile, "static")
 	staticHandle := http.FileServer(http.FS(fsys))

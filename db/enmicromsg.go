@@ -7,7 +7,7 @@ import (
 	"log"
 	"strings"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/mutecomm/go-sqlcipher/v4"
 )
 
 var MediaPathPrefix = "/media/"

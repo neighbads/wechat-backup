@@ -13,18 +13,23 @@ type WxFileIndex struct {
 	tableName string
 }
 
-func OpenWxFileIndex(dbPath string) *WxFileIndex {
+func OpenWxFileIndex(dbPath string, dbPassword string) *WxFileIndex {
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		log.Printf("未查询到 WxFileIndex.db 文件,%s", err)
 	}
+
+	db.Exec(fmt.Sprintf("PRAGMA key = '%s';", dbPassword))
+	db.Exec("PRAGMA cipher_use_hmac = OFF;")
+	db.Exec("PRAGMA cipher_page_size = 1024;")
+	db.Exec("PRAGMA kdf_iter = 4000;")
+
 	// 查询表名
 	var tableName string
 	querySql := "SELECT name _id FROM sqlite_master WHERE type ='table' limit 1"
 	err = db.QueryRow(querySql).Scan(&tableName)
 	if err != nil {
-		log.Printf("未查询到图片索引表名,%s", err)
-		// log.Fatal(err)
+		log.Fatal("未查询到图片索引表名", err)
 	} else {
 		log.Printf("文件索引表名: %s", tableName)
 	}

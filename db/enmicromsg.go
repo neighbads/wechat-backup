@@ -7,24 +7,39 @@ import (
 	"log"
 	"strings"
 
-	_ "github.com/mutecomm/go-sqlcipher/v4"
+	_ "github.com/mutecomm/go-sqlcipher"
 )
 
 var MediaPathPrefix = "/media/"
 
 type EnMicroMsg struct {
-	db     *sql.DB
-	myInfo UserInfo
+	db       *sql.DB
+	myInfo   UserInfo
+	chatList *ChatList
 }
 
-func OpenEnMicroMsg(dbPath string) *EnMicroMsg {
+func OpenEnMicroMsg(dbPath string, dbPassword string) *EnMicroMsg {
 	em := &EnMicroMsg{}
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		log.Fatalf("open db error: %v", err)
 	}
+
+	db.Exec(fmt.Sprintf("PRAGMA key = '%s';", dbPassword))
+	db.Exec("PRAGMA cipher_use_hmac = OFF;")
+	db.Exec("PRAGMA cipher_page_size = 1024;")
+	db.Exec("PRAGMA kdf_iter = 4000;")
+
+	// check db passwd
+	_, err = db.Exec("select count(*) FROM sqlite_master;")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	em.db = db
 	em.myInfo = em.GetMyInfo()
+
+	em.chatList = em.GetMyChatList()
 	return em
 }
 
@@ -33,6 +48,15 @@ func (em *EnMicroMsg) Close() {
 }
 
 func (em EnMicroMsg) ChatList(pageIndex int, pageSize int, all bool, name string) *ChatList {
+	result := &ChatList{}
+
+	result.Rows = append(result.Rows, em.chatList.Rows[pageIndex*pageSize:(pageIndex+1)*pageSize]...)
+	result.Total = len(em.chatList.Rows)
+
+	return result
+}
+
+func (em EnMicroMsg) ChatList_bak(pageIndex int, pageSize int, all bool, name string) *ChatList {
 	result := &ChatList{}
 	result.Total = 10
 	result.Rows = make([]ChatListRow, 0)
@@ -134,11 +158,83 @@ func (em EnMicroMsg) GetMyInfo() UserInfo {
 	querySql := "select rc.username,rc.alias,ifnull(rc.conRemark,''),rc.nickname,ifnull(imf.reserved1,'') as reserved1,ifnull(imf.reserved2,'') as reserved2 from rcontact rc left join img_flag imf on rc.username=imf.username where rc.username=(select value from userinfo WHERE id = 2)"
 	err := em.db.QueryRow(querySql).Scan(&r.UserName, &r.Alias, &r.ConRemark, &r.NickName, &r.Reserved1, &r.Reserved2)
 	if err != nil {
-		log.Printf("未查询到个人信息,%s", err)
+		log.Fatal("未查询到个人信息", err)
 	} else {
 		r.LocalAvatar = em.getLocalAvatar(r.UserName)
 	}
 	return r
+}
+
+func (em EnMicroMsg) GetMyChatList() *ChatList {
+	chatList := &ChatList{}
+
+	fmt.Print("Prepart chat list, Wait a moment...")
+
+	// 原 sql 在 sqlcipher 会崩溃, 分步查询
+	// get count,talker from message
+	rows, err := em.db.Query("select count(*) as msgCount,msg.talker,msg.createtime from message msg left join rcontact rc on msg.talker=rc.username group by msg.talker order by msg.createTime desc")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for rows.Next() {
+		var r ChatListRow
+
+		err = rows.Scan(&r.MsgCount, &r.Talker, &r.CreateTime)
+		if err != nil {
+			log.Printf("get Talker error,%s", err)
+		}
+
+		r.LocalAvatar = em.getLocalAvatar(r.Talker)
+		chatList.Rows = append(chatList.Rows, r)
+	}
+	rows.Close()
+
+	// get Alias,NickName,ConRemark from rcontact
+	for _, r := range chatList.Rows {
+		queryChatInfoSql := fmt.Sprintf("select ifnull(rc.alias,'') as alias,ifnull(rc.nickname,'') as nickname,ifnull(rc.conRemark,'') as conRemark from rcontact rc where rc.username='%s'", r.Talker)
+		err = em.db.QueryRow(queryChatInfoSql).Scan(&r.Alias, &r.NickName, &r.ConRemark)
+		if err != nil {
+			// log.Println("queryChatInfoSql", queryChatInfoSql)
+			// log.Printf("get Alias,NickName,ConRemark error, %s ,%s", r.Talker, err)
+			continue
+		}
+	}
+
+	// get reserved1,reserved2 from img_flag
+	for _, r := range chatList.Rows {
+		queryChatInfoSql := fmt.Sprintf("select ifnull(imf.reserved1,'') as reserved1,ifnull(imf.reserved2,'') as reserved2 from img_flag imf where imf.username='%s'", r.Talker)
+		err = em.db.QueryRow(queryChatInfoSql).Scan(&r.Reserved1, &r.Reserved2)
+		if err != nil {
+			// log.Println("queryChatInfoSql", queryChatInfoSql)
+			// log.Printf("get reserved1,reserved2 error, %s ,%s", r.Talker, err)
+			continue
+		}
+	}
+
+	// update nickname from chatroom
+	for _, r := range chatList.Rows {
+		if len(strings.Split(r.Talker, "@")) == 2 && strings.Split(r.Talker, "@")[1] == "chatroom" {
+			r.UserType = 1
+			if r.NickName == "" {
+				queryRoomSql := fmt.Sprintf("select displayname as nickname from chatroom where chatroomname='%s'", r.Talker)
+				room, _ := em.db.Query(queryRoomSql)
+				defer room.Close()
+				for room.Next() {
+					room.Scan(&r.NickName)
+				}
+			}
+		} else if r.Talker[:3] == "gh_" {
+			r.UserType = 2
+		}
+		// fmt.Printf("%+v\n", r)
+	}
+
+	chatList.Total = len(chatList.Rows)
+
+	fmt.Println("Done, total:", chatList.Total)
+
+	return chatList
 }
 
 func (em EnMicroMsg) getLocalAvatar(username string) string {
@@ -172,7 +268,6 @@ func (em EnMicroMsg) formatVideoPath(path string) string {
 	return fmt.Sprintf("%svideo/%s.mp4", MediaPathPrefix, path)
 }
 
-//
 func (em EnMicroMsg) GetEmojiInfo(imgPath string) EmojiInfo {
 	emojiInfo := EmojiInfo{}
 	querySql := fmt.Sprintf("select md5, cdnUrl,width,height from EmojiInfo where md5='%s'", imgPath)

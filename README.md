@@ -1,3 +1,27 @@
+
+## 使用流程
+
+
+## Sqlcipher 测试
+
+```bash
+./sqlcipher ./data_backup/20220907/MicroMsg/849ffe37857c38427b0ca7d1b62b2dbe/EnMicroMsg.db
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## 效果图
 ![](./web.png)
 

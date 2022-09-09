@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"net/url"
 	"strings"
 )
 
@@ -17,29 +16,11 @@ func InitWCDB(basePath string, dbPassword string) *WCDB {
 	enMicroMsgPath := basePath + "/EnMicroMsg.db"
 	wxFileIndexPath := basePath + "/WxFileIndex.db"
 
-	dbname_EnMicroMsg := fmt.Sprintf("%s?"+
-		"_pragma_key=%s&"+
-		"_pragma_cipher_use_hmac=off&"+
-		"_pragma_kdf_iter=4000&"+
-		"_pragma_cipher_page_size=1024&"+
-		"_pragma_cipher_hmac_algorithm=HMAC-SHA1&"+
-		"_pragma_cipher_kdf_algorithm=PBKDF2-HMAC-SHA1&",
-		enMicroMsgPath, url.QueryEscape(dbPassword))
+	// 没有使用 dsn 方式，因为 dsn 方式不支持更多的参数
+	// https://github.com/mutecomm/go-sqlcipher/blob/55dbde17881f711acb6da09a3eeca312ed16240a/sqlite3.go#L453
 
-	dbname_WxFileIndex := fmt.Sprintf("%s?"+
-		"_pragma_key=%s&"+
-		"_pragma_cipher_use_hmac=off&"+
-		"_pragma_kdf_iter=4000&"+
-		"_pragma_cipher_page_size=1024&"+
-		"_pragma_cipher_hmac_algorithm=HMAC-SHA1&"+
-		"_pragma_cipher_kdf_algorithm=PBKDF2-HMAC-SHA1&",
-		wxFileIndexPath, url.QueryEscape(dbPassword))
-
-	fmt.Println("dbname_EnMicroMsg:", dbname_EnMicroMsg)
-	fmt.Println("dbname_WxFileIndex:", dbname_WxFileIndex)
-
-	wcdb.enmicromsg = OpenEnMicroMsg(dbname_EnMicroMsg)
-	wcdb.wxfileindex = OpenWxFileIndex(dbname_WxFileIndex)
+	wcdb.enmicromsg = OpenEnMicroMsg(enMicroMsgPath, dbPassword)
+	wcdb.wxfileindex = OpenWxFileIndex(wxFileIndexPath, dbPassword)
 	return wcdb
 }
 

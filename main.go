@@ -8,7 +8,6 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -23,6 +22,7 @@ var wcdb *db.WCDB
 //go:embed static
 var htmlFile embed.FS
 
+var serverAddr = flag.String("h", "", "server listen port")
 var serverPort = flag.String("l", "8081", "server listen port")
 var basePath = flag.String("d", "./data_backup", "wechat bak folder")
 var dbPasswd = flag.String("p", "", "sqlite db password")
@@ -71,13 +71,18 @@ func init() {
 	}
 
 	// get input
-	var input int
-	fmt.Print("Please select backup folder[0]: ")
-	fmt.Scanln(&input)
-	if input >= len(dirList) {
-		log.Fatal("Invalid Input")
+	if len(dirList) > 1 {
+		var input int
+		fmt.Print("Please select backup folder[0]: ")
+		fmt.Scanln(&input)
+		if input >= len(dirList) {
+			log.Fatal("Invalid Input")
+		}
+		*basePath = dirList[input]
+	} else {
+		*basePath = dirList[0]
 	}
-	*basePath = dirList[input]
+	fmt.Println("")
 
 	fmt.Println("EnMicroMsg.db path: \t", *basePath+"/EnMicroMsg.db")
 	fmt.Println("WxFileIndex.db path: \t", *basePath+"/WxFileIndex.db")
@@ -99,6 +104,7 @@ func init() {
 	}
 
 	fmt.Println("sqlite db password: \t[ ", *dbPasswd, " ]")
+	fmt.Println("")
 }
 
 func main() {
@@ -115,16 +121,9 @@ func main() {
 	http.Handle("/", staticHandle)
 	http.Handle("/api/", route())
 
-	log.Println("server start")
-	interfaceAddr, _ := net.InterfaceAddrs()
-	for _, address := range interfaceAddr {
-		ipNet, _ := address.(*net.IPNet)
-		if ipNet.IP.To4() != nil {
-			log.Printf("server addr http://%s:%s", ipNet.IP.String(), *serverPort)
-		}
-	}
-
-	err := http.ListenAndServe(":"+*serverPort, nil)
+	listenAddr := *serverAddr + ":" + *serverPort
+	log.Println("Server start at", listenAddr)
+	err := http.ListenAndServe(listenAddr, nil)
 	if err != nil {
 		log.Fatalf("ListenAndServe: %v", err)
 	}

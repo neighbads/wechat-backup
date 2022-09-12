@@ -22,3 +22,6 @@ $(binary_name).linux-arm64:
 # Please execute the `apt install gcc-mingw-w64-x86-64` command before using it. 
 $(binary_name).windows:
 	CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC=x86_64-w64-mingw32-gcc go build -ldflags="$(LDFLAGS)" -buildmode exe -o dist/windows/$(binary_name).exe .
+
+web:
+	cd www && npm run build

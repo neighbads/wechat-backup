@@ -19,7 +19,7 @@ import (
 
 var wcdb *db.WCDB
 
-//go:embed static
+//go:embed www/dist
 var htmlFile embed.FS
 
 var serverAddr = flag.String("h", "", "server listen port")

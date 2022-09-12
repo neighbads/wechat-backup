@@ -111,7 +111,7 @@ func main() {
 
 	wcdb = db.InitWCDB(*basePath, *dbPasswd)
 
-	fsys, _ := fs.Sub(htmlFile, "static")
+	fsys, _ := fs.Sub(htmlFile, "www/dist")
 	staticHandle := http.FileServer(http.FS(fsys))
 
 	// 文件路由

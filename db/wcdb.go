@@ -77,6 +77,15 @@ func (wcdb WCDB) GetVoicePath(msgId string) string {
 	return wcdb.wxfileindex.GetVoicePath(msgId)
 }
 
+func (wcdb WCDB) GetContactList() []ContactListRow {
+	contactListRows := make([]ContactListRow, 0)
+	contactListRows = append(contactListRows, ContactListRow{
+		Wxid: "Wxid",
+	})
+
+	return contactListRows
+}
+
 // func (wcdb WCDB) GetFilePath(msgId string) string {
 // 	return wcdb.wxfileindex.GetFilePath(msgId)
 // }

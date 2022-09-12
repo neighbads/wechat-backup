@@ -1,5 +1,25 @@
 package db
 
+type ContactListRow struct {
+	Wxid      string     `json:"wxid"`
+	Initial   string     `json:"initial"`
+	HeaderUrl string     `json:"headerUrl"`
+	Nickname  string     `json:"nickname"`
+	Sex       int        `json:"sex"`
+	Remark    string     `json:"remark"`
+	Signature string     `json:"signature"`
+	Telphone  string     `json:"telphone"`
+	Album     []AlbumRow `json:"album"`
+	Area      []string   `json:"area"`
+	From      string     `json:"from"`
+	Tag       string     `json:"tag"`
+	Desc      struct{}   `json:"desc"`
+}
+
+type AlbumRow struct {
+	ImgSrc string `json:"imgSrc"`
+}
+
 type ChatList struct {
 	Total int           `json:"total"`
 	Rows  []ChatListRow `json:"rows"`

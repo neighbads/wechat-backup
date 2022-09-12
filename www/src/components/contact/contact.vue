@@ -63,6 +63,9 @@
         mounted() {
             // mutations.js中有介绍
             this.$store.commit("toggleTipsStatus", -1)
+
+            // 获取列表
+            this.getList();
         },
         activated() {
             this.$store.commit("toggleTipsStatus", -1)
@@ -78,7 +81,16 @@
         methods: {
             toPs(i) {
                 window.scrollTo(0, this.$refs['key_' + i][0].offsetTop)
-            }
+            },
+            getList(){
+                var self = this;
+
+                this.$http({url:this.$store.state.apiUrl+'contact/list',method:'GET',params:{}}).then(function (res) {
+                    console.log(res);
+                    console.log("store:",self.$store.state);
+                    self.$store.state.allContacts = res;
+                });
+            },
         }
     }
 </script>

@@ -1,3 +1,5 @@
 .vscode
-wechat-backup
-data_backup
+/wechat-backup
+/data_backup
+/dist
+/__debug_bin

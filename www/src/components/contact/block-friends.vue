@@ -1,12 +1,12 @@
 <template>
-    <!--公众号组件-->
+    <!--工具号组件-->
     <div :class="{'search-open-contact':!$store.state.headerStatus}" class="official-account">
         <header id="wx-header">
             <div class="center">
                 <router-link to="/contact" tag="div" class="iconfont icon-return-arrow">
                     <span>通讯录</span>
                 </router-link>
-                <span>公众号</span>
+                <span>黑名单</span>
             </div>
         </header>
         <!--这里的 search 组件的样式也需要修改一下-->
@@ -15,7 +15,7 @@
         <template v-for="(value,key) in contactsList">
             <div class="weui-cells__title" :key="key">{{key}}</div>
             <div class="weui-cells" :key="key+1">
-                <router-link :key="item.wxid" :to="{path:'/contact/details',query:{wxid:item.wxid, upPath:'/contact/official-accounts', upName:'公共号'}}"
+                <router-link :key="item.wxid" :to="{path:'/contact/details',query:{wxid:item.wxid, upPath:'/contact/block-friends', upName:'黑名单'}}"
                         class="weui-cell weui-cell_access" v-for="item in value" tag="div">
                     <div class="weui-cell__hd">
                         <img :src="item.headerUrl" class="home__mini-avatar___1nSrW">
@@ -46,10 +46,10 @@
         },
         computed: {
             contactsInitialList() {
-                return contact.getInitialList(contact.official)
+                return contact.getInitialList(contact.block)
             },
             contactsList() {
-                return contact.getContactsListGroupByInitial(contact.official, this.contactsInitialList)
+                return contact.getContactsListGroupByInitial(contact.block, this.contactsInitialList)
             }
         },
         methods: {
@@ -58,11 +58,11 @@
                     url:this.$store.state.apiUrl+'contact/list',
                     method:'GET',
                     params:{
-                        type: "official"
+                        type: "block"
                     }
                 }).then(function (res) {
                     // console.log(res);
-                    contact.official = res.data;
+                    contact.block = res.data;
                 });
             },
         }

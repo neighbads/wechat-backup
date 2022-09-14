@@ -143,8 +143,11 @@ func (api *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 var apiMap = map[string]func(w http.ResponseWriter, r *http.Request){
 	"/api/contact/list": func(w http.ResponseWriter, r *http.Request) {
-		// 聊天列表
-		result, err := json.Marshal(wcdb.GetContactList())
+		// 联系人列表
+		params := r.URL.Query()
+		contactType := params.Get("type")
+
+		result, err := json.Marshal(wcdb.GetContactList(contactType))
 		if err != nil {
 			log.Fatalf("json marshal error: %v", err)
 		}

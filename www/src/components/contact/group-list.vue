@@ -11,24 +11,26 @@
         </header>
         <!--这里的 search 组件的样式需要修改一下-->
         <search></search>
-        <section class="weui-cells">
-            <template v-for="(groupInfo,index) in groupList">
-                <a class="weui-cell weui-cell_access" :key="index">
-                    <div class="weui-cell__hd header-box">
-                        <div class="header multi-header">
-                            <img v-for="(user,index) in groupInfo.user" :key="index" :src="user.headerUrl">
-                        </div>
+        <!--群聊集合-->
+        <template v-for="(value,key) in contactsList">
+            <div class="weui-cells__title" :key="key">{{key}}</div>
+            <div class="weui-cells" :key="key+1">
+                <router-link :key="item.wxid" :to="{path:'/contact/details',query:{wxid:item.wxid, upPath:'/contact/group-list', upName:'群聊'}}"
+                        class="weui-cell weui-cell_access" v-for="item in value" tag="div">
+                    <div class="weui-cell__hd">
+                        <img :src="item.headerUrl" class="home__mini-avatar___1nSrW">
                     </div>
                     <div class="weui-cell__bd">
-                        <p>{{groupInfo.group_name}}</p>
+                        {{item.remark?item.remark:item.nickname}}
                     </div>
-                </a>
-            </template>
-        </section>
+                </router-link>
+            </div>
+        </template>
     </div>
 </template>
 <script>
     import search from "../common/search"
+    import contact from "../../vuex/contacts"
     export default {
         components: {
             search
@@ -38,17 +40,31 @@
 
             }
         },
+        mounted() {
+            // 获取列表
+            this.getList();
+        },
         computed: {
-            // 从消息数据中提取出群聊列表 不严谨 应该新建 groups.js，存放所有群聊数据
-            groupList() {
-                var temp = []
-                for (var i in this.$store.state.msgList.baseMsg) {
-                    if (this.$store.state.msgList.baseMsg[i].type === 'group') {
-                        temp.push(this.$store.state.msgList.baseMsg[i])
-                    }
-                }
-                return temp
+            contactsInitialList() {
+                return contact.getInitialList(contact.chatroom)
+            },
+            contactsList() {
+                return contact.getContactsListGroupByInitial(contact.chatroom, this.contactsInitialList)
             }
+        },
+        methods: {
+            getList(){
+                this.$http({
+                    url:this.$store.state.apiUrl+'contact/list',
+                    method:'GET',
+                    params:{
+                        type: "chatroom"
+                    }
+                }).then(function (res) {
+                    // console.log(res);
+                    contact.chatroom = res.data;
+                });
+            },
         }
     }
 </script>

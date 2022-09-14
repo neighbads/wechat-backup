@@ -49,6 +49,15 @@
                 "leaveAnimate": "" //页面离开动效
             }
         },
+        mounted: function(){
+            window.addEventListener('scroll',this.handleScroll,true);
+        },
+        methods: {
+            handleScroll() {
+                // let el = e.target
+                // console.log('滚动了 scrollTop: ' + el.scrollTop + ' clientHeight: ' + el.clientHeight)
+            }
+        },
         watch: {
             // 监听 $route 为店内页设置不同的过渡效果
             "$route" (to, from) {

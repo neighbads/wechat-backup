@@ -74,6 +74,22 @@ const routes = [{
         }
     },
     {
+        path: '/contact/official-tools',
+        name: "",
+        components: {
+            "default": resolve => require(["../components/contact/contact.vue"], resolve),
+            "subPage": resolve => require(["../components/contact/official-tools.vue"], resolve)
+        }
+    },
+    {
+        path: '/contact/block-friends',
+        name: "",
+        components: {
+            "default": resolve => require(["../components/contact/contact.vue"], resolve),
+            "subPage": resolve => require(["../components/contact/block-friends.vue"], resolve)
+        }
+    },
+    {
         path: '/contact/group-list',
         name: "",
         components: {

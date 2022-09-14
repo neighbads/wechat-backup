@@ -24,6 +24,24 @@ func InitWCDB(basePath string, dbPassword string) *WCDB {
 	return wcdb
 }
 
+func (wcdb WCDB) GetContactList(ContactType string) []ContactListRow {
+	if ContactType == "" || ContactType == "friend" {
+		return wcdb.enmicromsg.contactList.Friends
+	} else if ContactType == "tools" {
+		return wcdb.enmicromsg.contactList.Tools
+	} else if ContactType == "chatroom" {
+		return wcdb.enmicromsg.contactList.Chatroom
+	} else if ContactType == "openim" {
+		return wcdb.enmicromsg.contactList.Openim
+	} else if ContactType == "block" {
+		return wcdb.enmicromsg.contactList.Block
+	} else if ContactType == "official" {
+		return wcdb.enmicromsg.contactList.Official
+	}
+
+	return nil
+}
+
 func (wcdb WCDB) ChatList(pageIndex int, pageSize int, all bool, name string) *ChatList {
 	return wcdb.enmicromsg.ChatList(pageIndex, pageSize, all, name)
 }
@@ -75,15 +93,6 @@ func (wcdb WCDB) GetVideoPath(msgId string) string {
 
 func (wcdb WCDB) GetVoicePath(msgId string) string {
 	return wcdb.wxfileindex.GetVoicePath(msgId)
-}
-
-func (wcdb WCDB) GetContactList() []ContactListRow {
-	contactListRows := make([]ContactListRow, 0)
-	contactListRows = append(contactListRows, ContactListRow{
-		Wxid: "Wxid",
-	})
-
-	return contactListRows
 }
 
 // func (wcdb WCDB) GetFilePath(msgId string) string {

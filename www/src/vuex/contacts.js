@@ -11,8 +11,7 @@
  * area-地区
  * from-来源
  * desc-描述
- */
-const contacts = [{ //昵称备注都有的朋友
+ * {
         "wxid": "wxid_zhaohd",
         "initial": 'z',
         "headerUrl": "/images/header/header01.png",
@@ -28,223 +27,78 @@ const contacts = [{ //昵称备注都有的朋友
         "from": "",
         "tag": "",
         "desc": {
-
-        }
-    },
-    {
-        "wxid": "wxid_baiqian",
-        "initial": 'b',
-        "headerUrl": "/images/header/baiqian.jpg",
-        "nickname": "白浅",
-        "sex": 0,
-        "remark": "",
-        "signature": "青丘女帝，天族天妃",
-        "telphone": 18896586152,
-        "album": [{
-            imgSrc: "/images/album/baiqian/baiqian01.jpeg",
-            date: 182625262
-        }, {
-            imgSrc: "/images/album/baiqian/baiqian02.jpeg",
-            date: 182625262
-        }],
-        "area": ["青丘", "狐狸洞"],
-        "from": "通过扫一扫",
-        "tag": "女帝",
-        "desc": {
-            "title": "",
-            "picUrl": ""
-        }
-    }, { //昵称备注都有的朋友
-        "wxid": "wxid_yehua",
-        "initial": 'y',
-        "headerUrl": "/images/header/yehua.jpg",
-        "nickname": "夜华",
-        "sex": 1,
-        "remark": "夜华",
-        "signature": "浅浅，过来",
-        "telphone": 18896586152,
-        "album": [{
-            imgSrc: "/images/album/guanyu/guanyu02.jpeg",
-            date: 182625262
-        }, {
-            imgSrc: "/images/album/baiqian/baiqian02.jpeg",
-            date: 182625262
-        }],
-        "area": ["九重天", "洗梧宫"],
-        "from": "通过扫一扫",
-        "tag": "太子",
-        "desc": {
-            "title": "",
-            "picUrl": ""
-        }
-    },
-    {
-        "wxid": "wxid_liubei",
-        "initial": 'l',
-        "headerUrl": "/images/header/liubei.jpg",
-        "nickname": "刘备",
-        "sex": 1,
-        "remark": "刘备",
-        "signature": "惟贤惟德，仁服于人",
-        "telphone": 18896586152,
-        "album": [{
-            imgSrc: "/images/album/guanyu/guanyu02.jpeg",
-            date: 182625262
-        }, {
-            imgSrc: "/images/album/baiqian/baiqian01.jpeg",
-            date: 182625262
-        }],
-        "area": ["蜀国", "荆州"],
-        "from": "通过扫一扫",
-        "tag": "主公",
-        "desc": {
-            "title": "",
-            "picUrl": ""
-        }
-    },
-    {
-        "wxid": "wxid_guangyu",
-        "initial": 'g',
-        "headerUrl": "/images/header/guangyu.jpg",
-        "nickname": "关羽",
-        "sex": 1,
-        "remark": "关羽",
-        "signature": "观尔乃插标卖首",
-        "telphone": 18896586152,
-        "album": [{
-            imgSrc: "/images/album/baiqian/baiqian02.jpeg",
-            date: 182625262
-        }, {
-            imgSrc: "/images/album/guanyu/guanyu01.jpeg",
-            date: 182625262
-        }],
-        "area": ["蜀国", "荆州"],
-        "from": "通过扫一扫",
-        "tag": "蜀",
-        "desc": {
-            "title": "",
-            "picUrl": ""
-        }
-    },
-    {
-        "wxid": "wxid_zhugeliang",
-        "initial": 'z',
-        "headerUrl": "/images/header/zhugeliang.jpg",
-        "nickname": "诸葛亮",
-        "sex": 1,
-        "remark": "诸葛亮",
-        "signature": "你可识得此阵？",
-        "telphone": 18896586152,
-        "album": [{
-            imgSrc: "/images/album/baiqian/baiqian01.jpeg",
-            date: 182625262
-        }, {
-            imgSrc: "/images/album/guanyu/guanyu01.jpeg",
-            date: 182625262
-        }],
-        "area": ["蜀国", "荆州"],
-        "from": "通过扫一扫",
-        "tag": "卧龙",
-        "desc": {
-            "title": "",
-            "picUrl": ""
-        }
-    },
-    {
-        "wxid": "wxid_sunshangxiang",
-        "initial": 's',
-        "headerUrl": "/images/header/sunshangxiang.jpg",
-        "nickname": "孙尚香",
-        "sex": 0,
-        "remark": "孙尚香2",
-        "signature": "夫君,身体要紧~",
-        "telphone": 18896586152,
-        "album": [{
-            imgSrc: "/images/album/baiqian/baiqian02.jpeg",
-            date: 182625262
-        }],
-        "area": ["吴国", "富春"],
-        "from": "通过手机号码添加",
-        "tag": "孙夫人",
-        "desc": {
-            "title": "",
-            "picUrl": ""
-        }
-    },
-    {
-        "wxid": "wxid_sunquan",
-        "initial": 's',
-        "headerUrl": "/images/header/sunquan.jpg",
-        "nickname": "孙权",
-        "sex": 1,
-        "remark": "孙权",
-        "signature": "容我三思",
-        "telphone": 18896586152,
-        "album": [{
-            imgSrc: "/images/album/guanyu/guanyu01.jpeg",
-            date: 182625262
-        }],
-        "area": ["吴国", "吴郡"],
-        "from": "通过手机号码添加",
-        "tag": "主公",
-        "desc": {
-            "title": "",
-            "picUrl": ""
-        }
-    },
-    {
-        "wxid": "wxid_huangyueying",
-        "initial": 'h',
-        "headerUrl": "/images/header/huangyueying.jpg",
-        "nickname": "黄月英",
-        "sex": 0,
-        "remark": "黄月英",
-        "signature": "哼哼~",
-        "telphone": 18896586152,
-        "album": [{
-            imgSrc: "/images/album/guanyu/guanyu02.jpeg",
-            date: 182625262
-        }],
-        "area": ["蜀", "荆州"],
-        "from": "通过手机号码添加",
-        "tag": "蜀",
-        "desc": {
-            "title": "",
-            "picUrl": ""
-        }
-    }, {
-        "wxid": "wxid_zhenji",
-        "initial": 'z',
-        "headerUrl": "/images/header/zhenji.jpg",
-        "nickname": "甄姬",
-        "sex": 0,
-        "remark": "甄姬",
-        "signature": "仿佛兮若轻云之蔽月",
-        "telphone": 18896586152,
-        "album": [{
-            imgSrc: "/images/album/guanyu/guanyu01.jpeg",
-            date: 182625262
-        }],
-        "area": ["魏", "荆州", "中山"],
-        "from": "通过手机号码添加",
-        "tag": "蜀",
-        "desc": {
-            "title": "",
-            "picUrl": ""
         }
     }
-]
+ */
 
 const contact = {
-    contacts
-}
-contact.getUserInfo = function(wxid) {
-    if (!wxid) {
-        return;
-    } else {
-        for (var index in contacts) {
-            if (contacts[index].wxid === wxid) {
-                return contacts[index]
+    friends: [],    // 普通好友
+    tools: [],      // 工具号
+    chatroom: [],   // 群聊
+    openim: [],     // 企业好友
+    official: [],   // 公众号
+    block: [],      // 黑名单
+
+    getInitialList: function(list) {
+        var initialList = []
+        for (var i = 0; i < list.length; i++) {
+            var initial = list[i].initial.toUpperCase()
+            if (initialList.indexOf(initial) == -1 && initial != "#" && initial != "") {
+                initialList.push(list[i].initial.toUpperCase())
+            }
+        }
+        initialList = initialList.sort()
+        initialList.push("#")
+        // console.log(initialList);
+        return initialList
+    },
+    getContactsListGroupByInitial: function(list, initialList) {
+        var contactsList = {}
+        for (var i = 0; i < initialList.length; i++) {
+            var protoTypeName = initialList[i]
+            contactsList[protoTypeName] = []
+            for (var j = 0; j < list.length; j++) {
+                if (list[j].initial.toUpperCase() === protoTypeName) {
+                    contactsList[protoTypeName].push(list[j])
+                }
+            }
+        }
+        return contactsList
+    },
+
+    getUserInfo: function(wxid) {
+        if (!wxid) {
+            return;
+        } else {
+            for (var index0 in contact.friends) {
+                if (contact.friends[index0].wxid === wxid) {
+                    return contact.friends[index0]
+                }
+            }
+            for (var index1 in contact.tools) {
+                if (contact.tools[index1].wxid === wxid) {
+                    return contact.tools[index1]
+                }
+            }
+            for (var index2 in contact.chatroom) {
+                if (contact.chatroom[index2].wxid === wxid) {
+                    return contact.chatroom[index2]
+                }
+            }
+            for (var index3 in contact.openim) {
+                if (contact.openim[index3].wxid === wxid) {
+                    return contact.openim[index3]
+                }
+            }
+            for (var index4 in contact.official) {
+                if (contact.official[index4].wxid === wxid) {
+                    return contact.official[index4]
+                }
+            }
+            for (var index5 in contact.block) {
+                if (contact.block[index5].wxid === wxid) {
+                    return contact.block[index5]
+                }
             }
         }
     }

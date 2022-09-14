@@ -1,23 +1,38 @@
 package db
 
+type ContactList struct {
+	Friends  []ContactListRow `json:"friends"`
+	Tools    []ContactListRow `json:"tools"`
+	Official []ContactListRow `json:"official"`
+	Chatroom []ContactListRow `json:"chatroom"`
+	Openim   []ContactListRow `json:"openim"`
+	Block    []ContactListRow `json:"block"`
+}
+
 type ContactListRow struct {
-	Wxid      string     `json:"wxid"`
-	Initial   string     `json:"initial"`
-	HeaderUrl string     `json:"headerUrl"`
-	Nickname  string     `json:"nickname"`
-	Sex       int        `json:"sex"`
-	Remark    string     `json:"remark"`
-	Signature string     `json:"signature"`
-	Telphone  string     `json:"telphone"`
-	Album     []AlbumRow `json:"album"`
-	Area      []string   `json:"area"`
-	From      string     `json:"from"`
-	Tag       string     `json:"tag"`
-	Desc      struct{}   `json:"desc"`
+	Wxid      string      `json:"wxid"`
+	Initial   string      `json:"initial"`
+	HeaderUrl string      `json:"headerUrl"`
+	Nickname  string      `json:"nickname"`
+	Sex       int         `json:"sex"`
+	Remark    string      `json:"remark"`
+	Signature string      `json:"signature"`
+	Telphone  int         `json:"telphone"`
+	Album     []AlbumRow  `json:"album"`
+	Area      []string    `json:"area"`
+	From      string      `json:"from"`
+	Tag       string      `json:"tag"`
+	Desc      ContactDesc `json:"desc"`
 }
 
 type AlbumRow struct {
 	ImgSrc string `json:"imgSrc"`
+	Date   int    `json:"date"`
+}
+
+type ContactDesc struct {
+	Title  string `json:"title"`
+	PicUrl string `json:"picUrl"`
 }
 
 type ChatList struct {

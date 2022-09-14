@@ -30,8 +30,23 @@
                         <p>公众号</p>
                     </div>
                 </router-link>
+                <router-link to="/contact/official-tools" class="weui-cell">
+                    <div class="weui-cell_hd"><img class="img-obj-cover"
+                            src="/images/contact_top-offical.png"></div>
+                    <div class="weui-cell_bd weui-cell_primary">
+                        <p>工具号</p>
+                    </div>
+                </router-link>
+                <router-link to="/contact/block-friends" class="weui-cell">
+                    <div class="weui-cell_hd"><img class="img-obj-cover"
+                            src="/images/contact_top-offical.png"></div>
+                    <div class="weui-cell_bd weui-cell_primary">
+                        <p>黑名单</p>
+                    </div>
+                </router-link>
             </div>
             <!--联系人集合-->
+            <div >
             <template v-for="(value,key) in contactsList">
                 <!--首字母-->
                 <div :ref="`key_${key}`" :key="key" class="weui-cells__title">{{key}}</div>
@@ -47,12 +62,14 @@
                     </router-link>
                 </div>
             </template>
+        </div>
         </section>
         <!--检索-->
         <div class="initial-bar"><span @click="toPs(i)" :key="i+1" v-for="i in contactsInitialList">{{i}}</span></div>
     </div>
 </template>
 <script>
+    import contact from "../../vuex/contacts"
     export default {
         mixins: [window.mixin],
         data() {
@@ -72,10 +89,10 @@
         },
         computed: {
             contactsInitialList() {
-                return this.$store.getters.contactsInitialList
+                return contact.getInitialList(contact.friends)
             },
             contactsList() {
-                return this.$store.getters.contactsList
+                return contact.getContactsListGroupByInitial(contact.friends, this.contactsInitialList)
             }
         },
         methods: {
@@ -83,12 +100,15 @@
                 window.scrollTo(0, this.$refs['key_' + i][0].offsetTop)
             },
             getList(){
-                var self = this;
-
-                this.$http({url:this.$store.state.apiUrl+'contact/list',method:'GET',params:{}}).then(function (res) {
-                    console.log(res);
-                    console.log("store:",self.$store.state);
-                    self.$store.state.allContacts = res;
+                this.$http({
+                    url:this.$store.state.apiUrl+'contact/list',
+                    method:'GET',
+                    params:{
+                        type: "friend"
+                    }
+                }).then(function (res) {
+                    // console.log(res);
+                    contact.friends = res.data;
                 });
             },
         }

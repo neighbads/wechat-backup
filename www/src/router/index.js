@@ -51,11 +51,11 @@ const routes = [{
         }
     },
     {
-        path: '/contact/details',
+        path: '/contact/details/details',
         name: "",
         components: {
             "default": resolve => require(["../components/contact/contact.vue"], resolve),
-            "subPage": resolve => require(["../components/contact/details.vue"], resolve)
+            "subPage": resolve => require(["../components/contact/details/details.vue"], resolve)
         }
     },
     {

@@ -2,8 +2,8 @@
     <div class="profile">
         <header id="wx-header">
             <div class="center">
-                <router-link :to=this.$route.query.upPath tag="div" class="iconfont icon-return-arrow">
-                    <span>{{this.$route.query.upName}}</span>
+                <router-link :to=$store.state.backPath tag="div" class="iconfont icon-return-arrow">
+                    <span></span>
                 </router-link>
                 <span>详细资料</span>
             </div>
@@ -66,7 +66,7 @@
     </div>
 </template>
 <script>
-    import contact from "../../vuex/contacts"
+    import contact from "../../../vuex/contacts"
     export default {
         data() {
             return {

@@ -51,7 +51,7 @@
                 <!--首字母-->
                 <div :ref="`key_${key}`" :key="key" class="weui-cells__title">{{key}}</div>
                 <div class="weui-cells" :key="key+1">
-                    <router-link :key="item.wxid" :to="{path:'/contact/details',query:{wxid:item.wxid}}"
+                    <router-link :key="item.wxid" :to="{path:'/contact/details/details',query:{wxid:item.wxid}}"
                         class="weui-cell weui-cell_access" v-for="item in value" tag="div">
                         <div class="weui-cell__hd">
                             <img :src="item.headerUrl" class="home__mini-avatar___1nSrW">
